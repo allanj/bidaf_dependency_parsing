@@ -1,8 +1,8 @@
-local bert_model = "bert-base-uncased";
+local bert_model = "bert-base-chinese";
 
 {
     "dataset_reader":{
-        "type":"ontonotes_dependency",
+        "type":"ontonotes_dependency_chinese",
         "token_indexers": {
           "bert": {
             "type": "bert-pretrained",
@@ -13,11 +13,11 @@ local bert_model = "bert-base-uncased";
           }
         }
     },
-    "train_data_path": "datasets/ontonotes/train.sd.conllx",
-    "validation_data_path": "datasets/ontonotes/dev.sd.conllx",
-    "test_data_path": "datasets/ontonotes/test.sd.conllx",
+    "train_data_path": "datasets/ontonotes_chinese/train.sd.conllx",
+    "validation_data_path": "datasets/ontonotes_chinese/dev.sd.conllx",
+    "test_data_path": "datasets/ontonotes_chinese/test.sd.conllx",
     "model": {
-      "type": "biaffine_parser",
+      "type": "biaffine_parser_chinese",
       "text_field_embedder": {
       "allow_unmatched_keys": true,
       "embedder_to_indexer_map": {
@@ -39,7 +39,7 @@ local bert_model = "bert-base-uncased";
       },
       "encoder": {
         "type": "stacked_bidirectional_lstm",
-        "input_size": 868,
+        "input_size": 2404,
         "hidden_size": 400,
         "num_layers": 3,
         "recurrent_dropout_probability": 0.3,
@@ -63,21 +63,21 @@ local bert_model = "bert-base-uncased";
 
     "iterator": {
       "type": "bucket",
-      "sorting_keys": [["words", "num_tokens"]],
+      "sorting_keys": [["characters", "num_tokens"]],
       "batch_size" : 128
     },
     "trainer": {
       "num_epochs": 50,
       "grad_norm": 5.0,
       "patience": 50,
-      "cuda_device": 1,
+      "cuda_device": 4,
       "validation_metric": "+LAS",
       "optimizer": {
         "type": "dense_sparse_adam",
         "betas": [0.9, 0.9],
         "parameter_groups": [
                    [[".*bert.*"], {"lr": 1e-5}],
-                   [["_module.*", "head_arc_feedforward.*","child_arc_feedforward.*", "arc_attention", "head_tag_feedforward.*", "child_tag_feedforward.*", "tag_bilinear.*", "_pos_tag_embedding.*", "_head_sentinel.*"], {"lr": 1e-3}]
+                   [["_module.*", "head_arc_feedforward.*","child_arc_feedforward.*", "arc_attention", "head_tag_feedforward.*", "child_tag_feedforward.*", "tag_bilinear.*", "_pos_tag_embedding.*", "_head_sentinel.*", ".*span_extractor.*"], {"lr": 1e-3}]
        ]
       }
     }

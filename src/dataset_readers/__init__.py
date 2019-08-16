@@ -1,1 +1,2 @@
 from src.dataset_readers.ontonotes import OntoNotesDependencyDatasetReader
+from src.dataset_readers.ontonotes_chinese import OntoNotesChineseDependencyDatasetReader
