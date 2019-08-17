@@ -125,8 +125,12 @@ class BiaffineChineseDependencyParser(Model):
 
         embedded_text_input = embedded_text_input * character_mask.unsqueeze(-1).float()
 
+        num_spans = character_spans.size(1)
 
         span_mask = (character_spans[:, :, 0] >= 0).squeeze(-1).long()
+
+        if num_spans == 1:
+            span_mask = span_mask.unsqueeze(-1)
 
         spans = F.relu(character_spans.float()).long()
 
