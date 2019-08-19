@@ -9,7 +9,7 @@ dataset = "ontonotes"
 
 
 model_path = f"https://allan-dependency.s3-us-west-2.amazonaws.com/{language}/model.tar.gz"
-predictor = DependencyParserPredictor.from_path(archive_path=model_path, cuda_device=cuda_device)
+predictor = DependencyParserPredictor.from_path(archive_path=model_path, predictor_name="dep_parser", cuda_device=cuda_device)
 
 
 
