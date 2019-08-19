@@ -14,7 +14,9 @@ from allennlp.data.tokenizers import Token, Tokenizer
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def lazy_parse(text: str, fields: Tuple[str, ...]=DEFAULT_FIELDS):
+myfield = ('id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc', 'entity')
+
+def lazy_parse(text: str, fields: Tuple[str, ...]=myfield):
     for sentence in text.split("\n\n"):
         if sentence:
             yield [parse_line(line, fields)
@@ -66,17 +68,19 @@ class OntoNotesDependencyDatasetReader(DatasetReader):
                 heads = [x["head"] for x in annotation]
                 tags = [x["deprel"] for x in annotation]
                 words = [x["form"] for x in annotation]
+                entities = [x["entity"] for x in annotation]
                 if self.use_language_specific_pos:
                     pos_tags = [x["xpostag"] for x in annotation]
                 else:
                     pos_tags = [x["upostag"] for x in annotation]
-                yield self.text_to_instance(words, pos_tags, list(zip(tags, heads)))
+                yield self.text_to_instance(words, pos_tags, list(zip(tags, heads)), entities)
 
     @overrides
     def text_to_instance(self,  # type: ignore
                          words: List[str],
                          upos_tags: List[str],
-                         dependencies: List[Tuple[str, int]] = None) -> Instance:
+                         dependencies: List[Tuple[str, int]] = None,
+                         entities: List[str] = None) -> Instance:
         # pylint: disable=arguments-differ
         """
         Parameters
@@ -114,5 +118,5 @@ class OntoNotesDependencyDatasetReader(DatasetReader):
                                                         text_field,
                                                         label_namespace="head_index_tags")
 
-        fields["metadata"] = MetadataField({"words": words, "pos": upos_tags})
+        fields["metadata"] = MetadataField({"words": words, "pos": upos_tags, "entities": entities})
         return Instance(fields)

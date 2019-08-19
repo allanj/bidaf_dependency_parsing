@@ -1,0 +1,1 @@
+from src.predictors.dep_predictor import DependencyParserPredictor
