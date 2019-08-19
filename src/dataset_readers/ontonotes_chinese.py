@@ -16,7 +16,9 @@ from src.dataset_readers.ontonotes import OntoNotesDependencyDatasetReader
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def lazy_parse(text: str, fields: Tuple[str, ...]=DEFAULT_FIELDS):
+myfield = ('id', 'form', 'lemma', 'upostag', 'xpostag', 'feats', 'head', 'deprel', 'deps', 'misc', 'entity')
+
+def lazy_parse(text: str, fields: Tuple[str, ...]=myfield):
     for sentence in text.split("\n\n"):
         if sentence:
             yield [parse_line(line, fields)
@@ -50,7 +52,8 @@ class OntoNotesChineseDependencyDatasetReader(OntoNotesDependencyDatasetReader):
     def text_to_instance(self,  # type: ignore
                          words: List[str],
                          upos_tags: List[str],
-                         dependencies: List[Tuple[str, int]] = None) -> Instance:
+                         dependencies: List[Tuple[str, int]] = None,
+                         entities: List[str] = None) -> Instance:
         # pylint: disable=arguments-differ
         """
         Parameters
@@ -105,5 +108,5 @@ class OntoNotesChineseDependencyDatasetReader(OntoNotesDependencyDatasetReader):
                                                         character_span_field,
                                                         label_namespace="head_index_tags")
 
-        fields["metadata"] = MetadataField({"words": words, "pos": upos_tags})
+        fields["metadata"] = MetadataField({"words": words, "pos": upos_tags, "entities": entities})
         return Instance(fields)
