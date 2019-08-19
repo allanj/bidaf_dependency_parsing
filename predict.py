@@ -13,14 +13,14 @@ predictor = DependencyParserPredictor.from_path(archive_path=model_path, predict
 
 
 
-file = f"datasets/{dataset}/test.sd.conllx"
+file_input = f"datasets/{dataset}/test.sd.conllx"
 output = f"datasets/{dataset}/test.predsd.conllx"
 
 results = []
 
 f = open(output, "w", encoding="utf-8")
 
-for inst in predictor._dataset_reader._read('datasets/ontonotes/test.sd.conllx'):
+for inst in predictor._dataset_reader._read(file_input):
     result = predictor.predict_instance(inst)
     words = inst["metadata"]["words"]
     pos_tags = inst["metadata"]["pos"]
